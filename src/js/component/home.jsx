@@ -1,26 +1,74 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
+import '../../styles/index.css'
 
-//include images into your bundle
-import rigoImage from "../../img/rigo-baby.jpg";
+const API_URL = 'https://playground.4geeks.com/apis/fake/todos/user/alesanchezr';
 
-//create your first component
-const Home = () => {
-	return (
-		<div className="text-center">
-			<h1 className="text-center mt-5">Hello Rigo!</h1>
-			<p>
-				<img src={rigoImage} />
-			</p>
-			<a href="#" className="btn btn-success">
-				If you see this green button... bootstrap is working...
-			</a>
-			<p>
-				Made by{" "}
-				<a href="http://www.4geeksacademy.com">4Geeks Academy</a>, with
-				love!
-			</p>
-		</div>
-	);
-};
+function App() {
+  const [todos, setTodos] = useState([]);
+  const [newTodo, setNewTodo] = useState('');
 
-export default Home;
+  useEffect(() => {
+    // Fetch todos from the API on component mount
+    fetchTodos();
+  }, []);
+
+  const fetchTodos = async () => {
+    try {
+      const response = await axios.get(API_URL);
+      setTodos(response.data);
+    } catch (error) {
+      console.error('Error fetching todos:', error);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    setNewTodo(event.target.value);
+  };
+
+  const addTodo = async () => {
+    if (!newTodo.trim()) return;
+
+    try {
+      const response = await axios.post(API_URL, { title: newTodo });
+      setTodos([...todos, response.data]);
+      setNewTodo('');
+    } catch (error) {
+      console.error('Error adding todo:', error);
+    }
+  };
+
+  const deleteTodo = async (id) => {
+    try {
+      await axios.delete(`${API_URL}/${id}`);
+      const updatedTodos = todos.filter((todo) => todo.id !== id);
+      setTodos(updatedTodos);
+    } catch (error) {
+      console.error('Error deleting todo:', error);
+    }
+  };
+
+  return (
+    <div className="App">
+      <h1>To-Do List</h1>
+      <div className="todo-container">
+        <input
+          type="text"
+          placeholder="Add a new todo..."
+          value={newTodo}
+          onChange={handleInputChange}
+        />
+        <button onClick={addTodo}>Add</button>
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.id}>
+              <span>{todo.title}</span>
+              <button onClick={() => deleteTodo(todo.id)}>Delete</button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
+export default App;
