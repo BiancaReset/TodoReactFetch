@@ -13,7 +13,7 @@ function TodoList() {
 
   const fetchTodos = async () => {
     try {
-      const response = await axios.get(`${API_URL}/todos/user/BiancaReset`);
+      const response = await axios.get(`${API_URL}/user/BiancaReset`);
       setTodos(response.data.result); 
     } catch (error) {
       console.error('Error fetching todos:', error);
@@ -28,7 +28,7 @@ function TodoList() {
     if (!newTodo.trim()) return;
   
     try {
-      const response = await axios.post(`${API_URL}/todos/user/BiancaReset`, {
+      const response = await axios.post(`${API_URL}/user/BiancaReset`, {
         label: newTodo,
         done: false,
       });
@@ -41,7 +41,7 @@ function TodoList() {
 
   const updateTodoList = async () => {
     try {
-      await axios.put(`${API_URL}/todos/user/BiancaReset`, todos);
+      await axios.put(`${API_URL}/user/BiancaReset`, todos);
       console.log('Todo list updated successfully');
     } catch (error) {
       console.error('Error updating todo list:', error);
